@@ -800,6 +800,13 @@ document.getElementById('main-form').addEventListener('submit', async function(e
     document.getElementById('c-users').textContent = pos;
     window._ref = ref;
 
+    // Enviar email de confirmacion via Edge Function
+    fetch('https://xjbttwgcqmmrnemqvuwd.supabase.co/functions/v1/send-waitlist-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
+      body: JSON.stringify({ nombre, email, position: pos, ref_code: ref, puntos: pts })
+    }).catch(function() {});
+
     showPage('page2');
 
   } catch(err) {
