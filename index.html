@@ -741,6 +741,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
     showError('Debes tener al menos 18 años para unirte a Nexo.');
     return;
   }
+  const nombre = document.getElementById('f-nombre').value.trim();
   const email = document.getElementById('f-email').value.trim().toLowerCase();
   const genero = document.getElementById('f-genero').value;
   const busco = document.getElementById('f-busco').value;
