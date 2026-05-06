@@ -110,6 +110,8 @@ select option { background:#1a1a24; }
 .pts-val { font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--gold2); }
 .pts-dot { width:3px; height:3px; border-radius:50%; background:var(--orange); opacity:0.4; margin-right:8px; flex-shrink:0; }
 .pts-left { display:flex; align-items:center; }
+.form-section-label { font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:400; color:var(--orange); letter-spacing:2.5px; text-transform:uppercase; margin:4px 0 14px; }
+.form-section-label.section-2 { margin-top:22px; padding-top:18px; border-top:1px solid var(--border); }
 
 .btn-main { width:100%; padding:15px; background:linear-gradient(135deg,#f97316,#f59e0b 50%,#ec4899); border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#fff; cursor:pointer; transition:opacity 0.2s,transform 0.15s; }
 .btn-main:hover { opacity:0.9; transform:translateY(-1px); }
@@ -381,66 +383,97 @@ footer a { color:inherit; text-decoration:none; }
     <p class="form-sub">Cuanto más completes ahora, mejor posición — y más cerca estarás del top 20%.</p>
 
     <form id="main-form">
-      <div class="field-row">
-        <div class="field"><label>Nombre</label><input type="text" id="f-nombre" placeholder="Tu nombre" required></div>
-        <div class="field"><label>Edad</label><input type="number" id="f-edad" placeholder="25" min="18" max="65" required></div>
-      </div>
+
+      <!-- Sección 1 — Quién eres -->
+      <div class="form-section-label">Quién eres</div>
+
+      <div class="field"><label>Nombre</label><input type="text" id="f-nombre" placeholder="Tu nombre" required></div>
+
+      <div class="field"><label>Fecha de nacimiento</label><input type="date" id="f-fecha-nacimiento" required></div>
+
       <div class="field"><label>Email</label><input type="email" id="f-email" placeholder="tu@email.com" required></div>
+
       <div class="field-row">
         <div class="field"><label>Género</label>
           <select id="f-genero" required>
             <option value="" disabled selected>Selecciona</option>
-            <option value="hombre">Hombre</option>
             <option value="mujer">Mujer</option>
-            <option value="no-binario">No binario</option>
+            <option value="hombre">Hombre</option>
+            <option value="no-binarie">No binarie</option>
             <option value="otro">Otro</option>
           </select>
         </div>
-        <div class="field"><label>Busco</label>
-          <select id="f-busco" required>
+        <div class="field"><label>Orientación</label>
+          <select id="f-orientation" required>
             <option value="" disabled selected>Selecciona</option>
-            <option value="hombres">Hombres</option>
-            <option value="mujeres">Mujeres</option>
-            <option value="ambos">Ambos</option>
-          </select>
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Barrio</label>
-          <select id="f-barrio">
-            <option value="" disabled selected>Tu zona</option>
-            <option>Eixample</option><option>Gràcia</option><option>Poble Sec</option>
-            <option>Sant Martí</option><option>Sarrià-Sant Gervasi</option><option>Les Corts</option>
-            <option>Sants-Montjuïc</option><option>Nou Barris</option><option>Sant Andreu</option>
-            <option>Horta-Guinardó</option><option>Ciutat Vella</option><option>Otro / Alrededores</option>
-          </select>
-        </div>
-        <div class="field"><label>Profesión</label><input type="text" id="f-profesion" placeholder="Médico, diseñadora..."></div>
-      </div>
-      <div class="field"><label>Bio breve</label><input type="text" id="f-bio" placeholder="Una frase sobre ti..." maxlength="100"></div>
-      <div class="field-row">
-        <div class="field"><label>¿Qué buscas?</label>
-          <select id="f-intencion">
-            <option value="" disabled selected>Intención</option>
-            <option>Relación seria</option><option>Conocer gente</option><option>Ver qué surge</option>
-          </select>
-        </div>
-        <div class="field"><label>¿Foto de perfil?</label>
-          <select id="f-foto">
-            <option value="" disabled selected>Selecciona</option>
-            <option value="si">Sí, la subiré</option>
-            <option value="no">Aún no</option>
+            <option value="heterosexual">Heterosexual</option>
+            <option value="bisexual">Bisexual</option>
+            <option value="pansexual">Pansexual</option>
+            <option value="gay">Gay</option>
+            <option value="lesbiana">Lesbiana</option>
+            <option value="otra">Otra</option>
           </select>
         </div>
       </div>
 
+      <div class="field"><label>Busco</label>
+        <select id="f-busco" required>
+          <option value="" disabled selected>Selecciona</option>
+          <option value="hombres">Hombres</option>
+          <option value="mujeres">Mujeres</option>
+          <option value="ambos">Ambos</option>
+          <option value="todos">Todos los géneros</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Idiomas (al menos 1)</label>
+        <div class="chips-wrap" id="chips-idiomas" style="margin-bottom:0;margin-top:4px">
+          <div class="chip" data-val="es">Castellano</div>
+          <div class="chip" data-val="ca">Català</div>
+          <div class="chip" data-val="en">English</div>
+          <div class="chip" data-val="otros">Otros</div>
+        </div>
+      </div>
+
+      <!-- Sección 2 — Tu mundo -->
+      <div class="form-section-label section-2">Tu mundo</div>
+
+      <div class="field"><label>Barrio</label>
+        <select id="f-barrio" required>
+          <option value="" disabled selected>Tu zona</option>
+          <option>Eixample</option>
+          <option>Gràcia</option>
+          <option>Sant Antoni</option>
+          <option>Poble-sec</option>
+          <option>Born/Ribera</option>
+          <option>Gòtic</option>
+          <option>Raval</option>
+          <option>Barceloneta</option>
+          <option>Poblenou</option>
+          <option>Sants</option>
+          <option>Sant Andreu</option>
+          <option>Sarrià-Sant Gervasi</option>
+        </select>
+      </div>
+
+      <div class="field"><label>Profesión</label><input type="text" id="f-profesion" placeholder="Médico, diseñadora..." required></div>
+
+      <div class="field"><label>Bio breve (max 100)</label><input type="text" id="f-bio" placeholder="Una frase sobre ti..." maxlength="100" required></div>
+
+      <div class="field"><label>¿Qué buscas?</label>
+        <select id="f-intencion" required>
+          <option value="" disabled selected>Intención</option>
+          <option value="serio">Algo serio</option>
+          <option value="conocer">Conocer gente</option>
+          <option value="abierto">Estoy abierto/a</option>
+        </select>
+      </div>
+
       <div class="pts-section">
-        <div class="pts-label">Sube posiciones completando tu perfil</div>
-        <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Registrarse</div><span class="pts-val">+100 pts</span></div>
-        <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Completar el test de personalidad</div><span class="pts-val">+300 pts</span></div>
-        <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Subir foto de perfil</div><span class="pts-val">+100 pts</span></div>
-        <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Verificar identidad</div><span class="pts-val">+200 pts</span></div>
-        <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Invitar a un amigo/a</div><span class="pts-val">+300 pts</span></div>
+        <div class="pts-label">Cómo subir posiciones</div>
+        <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Registrarte</div><span class="pts-val">+50 pts</span></div>
+        <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Por cada amigo que invites</div><span class="pts-val">+300 pts</span></div>
       </div>
 
       <button type="submit" class="btn-main">Reservar mi lugar en Nexo →</button>
@@ -772,43 +805,105 @@ function getRefFromURL() {
 }
 const refUsed = getRefFromURL();
 
+// Mapping barrio → lat/lng (centros aproximados de los distritos/barrios de Barcelona)
+const BARRIO_COORDS = {
+  'Eixample':            { lat: 41.3899, lng: 2.1635 },
+  'Gràcia':              { lat: 41.4036, lng: 2.1577 },
+  'Sant Antoni':         { lat: 41.3815, lng: 2.1604 },
+  'Poble-sec':           { lat: 41.3742, lng: 2.1634 },
+  'Born/Ribera':         { lat: 41.3849, lng: 2.1817 },
+  'Gòtic':               { lat: 41.3825, lng: 2.1769 },
+  'Raval':               { lat: 41.3804, lng: 2.1689 },
+  'Barceloneta':         { lat: 41.3795, lng: 2.1899 },
+  'Poblenou':            { lat: 41.4032, lng: 2.1996 },
+  'Sants':               { lat: 41.3759, lng: 2.1389 },
+  'Sant Andreu':         { lat: 41.4350, lng: 2.1888 },
+  'Sarrià-Sant Gervasi': { lat: 41.4014, lng: 2.1320 },
+};
+
+// Setear max date del input fecha_nacimiento a hace 18 años exactos
+(function setMaxFechaNacimiento() {
+  const dateEl = document.getElementById('f-fecha-nacimiento');
+  if (!dateEl) return;
+  const today = new Date();
+  const max = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+  dateEl.max = max.toISOString().split('T')[0];
+})();
+
+// Multi-select chips para idiomas (page1)
+document.querySelectorAll('#chips-idiomas .chip').forEach(chip => {
+  chip.addEventListener('click', () => chip.classList.toggle('selected'));
+});
+
+function getSelectedIdiomas() {
+  return Array.from(document.querySelectorAll('#chips-idiomas .chip.selected')).map(c => c.dataset.val);
+}
+
+function isValidEmail(s) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
 document.getElementById('main-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = document.querySelector('.btn-main');
   btn.textContent = 'Guardando...';
   btn.disabled = true;
 
-  const edad = document.getElementById('f-edad').value;
-  if (parseInt(edad) < 18) {
-    btn.textContent = 'Reservar mi lugar en Nexo →';
-    btn.disabled = false;
-    showError('Debes tener al menos 18 años para unirte a Nexo.');
-    return;
-  }
   const nombre = document.getElementById('f-nombre').value.trim();
+  const fechaNacimiento = document.getElementById('f-fecha-nacimiento').value;
   const email = document.getElementById('f-email').value.trim().toLowerCase();
   const genero = document.getElementById('f-genero').value;
+  const orientation = document.getElementById('f-orientation').value;
   const busco = document.getElementById('f-busco').value;
-  const barrio = document.getElementById('f-barrio').value || null;
-  const profesion = document.getElementById('f-profesion').value.trim() || null;
-  const bio = document.getElementById('f-bio').value.trim() || null;
-  const intencion = document.getElementById('f-intencion').value || null;
-  const foto = document.getElementById('f-foto').value || null;
+  const idiomas = getSelectedIdiomas();
+  const barrio = document.getElementById('f-barrio').value;
+  const profesion = document.getElementById('f-profesion').value.trim();
+  const bio = document.getElementById('f-bio').value.trim();
+  const intencion = document.getElementById('f-intencion').value;
 
-  // Calcular puntos
-  let pts = 100;
-  if (bio) pts += 30;
-  if (profesion) pts += 20;
-  if (barrio) pts += 20;
-  if (foto === 'si') pts += 30;
-  if (refUsed) pts += 50; // bonus por venir referido
+  // Validación: email format
+  if (!isValidEmail(email)) {
+    btn.textContent = 'Reservar mi lugar en Nexo →';
+    btn.disabled = false;
+    showError('Introduce un email válido.');
+    return;
+  }
+
+  // Validación: idiomas al menos 1
+  if (idiomas.length === 0) {
+    btn.textContent = 'Reservar mi lugar en Nexo →';
+    btn.disabled = false;
+    showError('Selecciona al menos un idioma.');
+    return;
+  }
+
+  // Validación: 18 años mínimo (cliente)
+  if (fechaNacimiento) {
+    const dob = new Date(fechaNacimiento);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    if (age < 18) {
+      btn.textContent = 'Reservar mi lugar en Nexo →';
+      btn.disabled = false;
+      showError('Debes tener al menos 18 años para unirte a Nexo.');
+      return;
+    }
+  }
+
+  // Coords del barrio (todos los barrios listados están en BARRIO_COORDS)
+  const coords = BARRIO_COORDS[barrio] || null;
+
+  // Cálculo de puntos: solo registro + bonus referido (resto se gana en la app)
+  let pts = 50;
+  if (refUsed) pts += 200;
 
   // Generar código de referido único
   const ref = genRef();
 
   try {
-    // Refrescar realCount justo antes del INSERT (por si alguien se registró
-    // entre loadCounter() y este momento) y calcular posición visible.
+    // Refrescar realCount justo antes del INSERT y calcular posición visible.
     let realCountBefore = lastKnownRealCount;
     try {
       realCountBefore = await fetchRealCount();
@@ -818,11 +913,18 @@ document.getElementById('main-form').addEventListener('submit', async function(e
     // Insertar en Supabase
     const { data, error } = await db.from('waitlist').insert({
       nombre,
-      apellido: '',
       email,
-      edad,
+      fecha_nacimiento: fechaNacimiento,
       genero,
-      ciudad: barrio || 'Barcelona',
+      orientation,
+      busco,
+      idiomas,
+      ciudad: barrio,
+      lat: coords ? coords.lat : null,
+      lng: coords ? coords.lng : null,
+      profesion,
+      bio,
+      intencion,
       ref_code: ref,
       ref_used: refUsed || null,
       puntos: pts
@@ -1168,8 +1270,9 @@ function updateProfileUI() {
 
 function backFromProfile() { showPage('page2'); }
 
-// Chips
+// Chips (single-select para los wraps de page3; idiomas se gestiona aparte como multi-select)
 document.querySelectorAll('.chips-wrap').forEach(wrap => {
+  if (wrap.id === 'chips-idiomas') return;
   wrap.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
       wrap.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
