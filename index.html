@@ -309,7 +309,7 @@ footer a { color:inherit; text-decoration:none; }
       <div class="form-section-label section-2">Tu mundo</div>
 
       <div class="field"><label>¿De dónde eres?</label>
-        <select id="ciudad" required>
+        <select id="f-ciudad" required>
           <option value="" disabled selected>Selecciona dónde vives</option>
           <option value="barcelona_ciudad">Barcelona ciudad</option>
           <option value="barcelona_metropolitana">Área metropolitana (Hospitalet, Badalona, Castelldefels, Santa Coloma, Sant Cugat, etc.)</option>
@@ -524,7 +524,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
   const orientation = document.getElementById('f-orientation').value;
   const busco = document.getElementById('f-busco').value;
   const idiomas = getSelectedIdiomas();
-  const ciudad = document.getElementById('ciudad').value;
+  const ciudad = document.getElementById('f-ciudad').value;
   const profesion = document.getElementById('f-profesion').value.trim();
   const bio = document.getElementById('f-bio').value.trim();
   const intencion = document.getElementById('f-intencion').value;
