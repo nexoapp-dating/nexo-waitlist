@@ -685,15 +685,22 @@ const LOGO_URL = 'Logo_versión_1-removebg-preview.png';
 // ============================================================
 // PAGE 1 — LANDING
 // ============================================================
-function animCount(el, target, ms) {
-  let v = 0, step = target / (ms/16);
-  const iv = setInterval(() => {
-    v = Math.min(v+step, target);
-    el.textContent = Math.floor(v);
-    if (v >= target) clearInterval(iv);
-  }, 16);
+function animCount(el, target, ms, fromValue) {
+  if (!el) return;
+  const start = (typeof fromValue === 'number') ? fromValue : 0;
+  const end = Math.floor(target);
+  const duration = Math.max(1, ms);
+  const t0 = performance.now();
+  function frame(now) {
+    const t = Math.min((now - t0) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+    const v = Math.round(start + (end - start) * eased);
+    el.textContent = v;
+    if (t < 1) requestAnimationFrame(frame);
+    else el.textContent = end;
+  }
+  requestAnimationFrame(frame);
 }
-setTimeout(() => animCount(document.getElementById('c-users'), 247, 1200), 500);
 
 
 
@@ -710,14 +717,49 @@ let userData = {};
 
 // URL base — cambiar por la URL real de Netlify cuando esté publicado
 const SITE_URL = window.location.origin + window.location.pathname.replace('index.html','');
+
+// ============================================================
+// COUNTER HÍBRIDO — orgánico decreciente + bonus por registros reales
+// ============================================================
+const LAUNCH_EPOCH = new Date('2026-05-06T00:00:00Z').getTime();
+
+function getOrganicBase() {
+  const daysSinceLaunch = Math.max(0, (Date.now() - LAUNCH_EPOCH) / (1000 * 60 * 60 * 24));
+  return Math.floor(184 + 60 * Math.log(daysSinceLaunch + 1));
+}
+
+function computeCounterMostrado(realCount) {
+  const totalSimulado = getOrganicBase() + Math.floor(realCount * 1.5);
+  return Math.max(totalSimulado, realCount);
+}
+
+// Posición visible que se asigna al usuario que está a punto de registrarse.
+// realCount = filas en waitlist ANTES del INSERT.
+function computePosition(realCount) {
+  return getOrganicBase() + Math.floor(realCount * 1.5) + 1;
+}
+
+let currentCounterValue = 0;
+let lastKnownRealCount = 0;
+
+async function fetchRealCount() {
+  const { count } = await db.from('waitlist').select('*', { count: 'exact', head: true });
+  return (typeof count === 'number') ? count : 0;
+}
+
 async function loadCounter() {
+  const el = document.getElementById('c-users');
+  if (!el) return;
+  let target;
   try {
-    const { count } = await db.from('waitlist').select('*', { count: 'exact', head: true });
-    if (count !== null) {
-      document.getElementById('c-users').textContent = count;
-      document.getElementById('c-spots').textContent = Math.max(0, 500 - count);
-    }
-  } catch(e) { /* silencioso */ }
+    const realCount = await fetchRealCount();
+    lastKnownRealCount = realCount;
+    target = computeCounterMostrado(realCount);
+  } catch (e) {
+    target = getOrganicBase(); // fallback si Supabase falla
+  }
+  currentCounterValue = target;
+  animCount(el, target, 1500, 0);
 }
 loadCounter();
 
@@ -763,6 +805,14 @@ document.getElementById('main-form').addEventListener('submit', async function(e
   const ref = genRef();
 
   try {
+    // Refrescar realCount justo antes del INSERT (por si alguien se registró
+    // entre loadCounter() y este momento) y calcular posición visible.
+    let realCountBefore = lastKnownRealCount;
+    try {
+      realCountBefore = await fetchRealCount();
+    } catch(e) { /* usar el último conocido */ }
+    const pos = computePosition(realCountBefore);
+
     // Insertar en Supabase
     const { data, error } = await db.from('waitlist').insert({
       nombre,
@@ -792,14 +842,20 @@ document.getElementById('main-form').addEventListener('submit', async function(e
       await db.rpc('add_referral_points', { ref_code: refUsed }).catch(() => {});
     }
 
-    const pos = data.position || '—';
     userData = { nombre, email, genero, busco, ref, pos, pts };
 
     document.getElementById('p2-position').textContent = pos;
     document.getElementById('p2-pts').textContent = pts + ' puntos acumulados';
     document.getElementById('p2-reflink').textContent = SITE_URL + '?ref=' + ref;
-    document.getElementById('c-users').textContent = pos;
     window._ref = ref;
+
+    // Animar el counter visible para reflejar el +1 o +2 que aporta este registro.
+    const newRealCount = realCountBefore + 1;
+    lastKnownRealCount = newRealCount;
+    const newCounterValue = computeCounterMostrado(newRealCount);
+    const cUsersEl = document.getElementById('c-users');
+    animCount(cUsersEl, newCounterValue, 700, currentCounterValue);
+    currentCounterValue = newCounterValue;
 
     // Enviar email de confirmacion via Edge Function
     fetch('https://xjbttwgcqmmrnemqvuwd.supabase.co/functions/v1/send-waitlist-email', {
