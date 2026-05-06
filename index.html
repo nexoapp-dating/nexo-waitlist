@@ -71,14 +71,6 @@ h1 em { font-style:italic; background:linear-gradient(135deg,#f97316,#f59e0b,#ec
 .ci-title { font-size:13px; font-weight:500; color:var(--text); margin-bottom:3px; }
 .ci-desc { font-size:12px; color:var(--muted); line-height:1.55; }
 
-/* Steps */
-.steps-wrap { margin-bottom:36px; animation:fadeUp 0.7s 0.25s ease both; }
-.step-row { display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--border); align-items:flex-start; }
-.step-row:last-child { border-bottom:none; }
-.step-n { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; color:rgba(249,115,22,0.25); min-width:28px; line-height:1; }
-.step-t { font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px; }
-.step-d { font-size:12px; color:var(--muted); line-height:1.5; }
-
 /* Rewards */
 .rewards-wrap { margin-bottom:36px; animation:fadeUp 0.7s 0.3s ease both; }
 .rewards-grid { display:flex; flex-direction:column; gap:8px; }
@@ -182,19 +174,14 @@ footer a { color:inherit; text-decoration:none; }
     <p class="tagline">Empieza en Barcelona. Llega donde tú estés.</p>
   </div>
 
-  <!-- Counter -->
+  <!-- Counter (2 slots: en-lista / plazas-beta) -->
   <div class="counter-bar">
-    <div class="c-item">
+    <div class="c-item" style="flex:1">
       <span class="c-num" id="c-users">0</span>
       <span class="c-label">En lista</span>
     </div>
     <div class="c-div"></div>
-    <div class="c-item">
-      <span class="c-num" style="font-size:20px;letter-spacing:2px">BCN</span>
-      <span class="c-label">1 Junio 2026</span>
-    </div>
-    <div class="c-div"></div>
-    <div class="c-item">
+    <div class="c-item" style="flex:1">
       <span class="c-num" style="font-size:36px">∞</span>
       <span class="c-label">Plazas en beta</span>
       <span class="c-sublabel">500 con beneficios Founder</span>
@@ -225,32 +212,6 @@ footer a { color:inherit; text-decoration:none; }
           <div class="ci-title">Adiós al ghosting</div>
           <div class="ci-desc">Los matches tienen tiempo para hablar. Si no fluye, se cierra con un mensaje de adiós. Sin silencios.</div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Steps -->
-  <div class="steps-wrap">
-    <div class="section-eyebrow">El proceso</div>
-    <div class="step-row">
-      <div class="step-n">01</div>
-      <div>
-        <div class="step-t">Completas el test de personalidad</div>
-        <div class="step-d">No es un formulario más. Es la base para encontrar a quien realmente conecta contigo.</div>
-      </div>
-    </div>
-    <div class="step-row">
-      <div class="step-n">02</div>
-      <div>
-        <div class="step-t">Cada lunes, 5 matches para ti</div>
-        <div class="step-d">Seleccionados en base a compatibilidad de personalidad, valores y estilo de vida. Tómatelo con calma — tienes toda la semana.</div>
-      </div>
-    </div>
-    <div class="step-row">
-      <div class="step-n">03</div>
-      <div>
-        <div class="step-t">Conversaciones con sentido</div>
-        <div class="step-d">Si hay conexión, seguís hablando. Si no, se cierra educadamente. Sin fantasmas.</div>
       </div>
     </div>
   </div>
@@ -390,8 +351,7 @@ footer a { color:inherit; text-decoration:none; }
 
   <footer>
     © 2026 Nexo · Barcelona<br>
-    <a href="#">Privacidad</a> · <a href="#">Contacto</a><br>
-    <span style="opacity:0.4;font-size:10px">Próximamente en más ciudades.</span>
+    <a href="#">Privacidad</a> · <a href="#">Contacto</a>
   </footer>
 
 </div>
