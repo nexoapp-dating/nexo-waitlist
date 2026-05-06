@@ -308,21 +308,13 @@ footer a { color:inherit; text-decoration:none; }
       <!-- Sección 2 — Tu mundo -->
       <div class="form-section-label section-2">Tu mundo</div>
 
-      <div class="field"><label>Barrio</label>
-        <select id="f-barrio" required>
-          <option value="" disabled selected>Tu zona</option>
-          <option>Eixample</option>
-          <option>Gràcia</option>
-          <option>Sant Antoni</option>
-          <option>Poble-sec</option>
-          <option>Born/Ribera</option>
-          <option>Gòtic</option>
-          <option>Raval</option>
-          <option>Barceloneta</option>
-          <option>Poblenou</option>
-          <option>Sants</option>
-          <option>Sant Andreu</option>
-          <option>Sarrià-Sant Gervasi</option>
+      <div class="field"><label>¿De dónde eres?</label>
+        <select id="ciudad" required>
+          <option value="" disabled selected>Selecciona dónde vives</option>
+          <option value="barcelona_ciudad">Barcelona ciudad</option>
+          <option value="barcelona_metropolitana">Área metropolitana (Hospitalet, Badalona, Castelldefels, Santa Coloma, Sant Cugat, etc.)</option>
+          <option value="otra_espana">Otra ciudad de España</option>
+          <option value="otra">Otro país</option>
         </select>
       </div>
 
@@ -497,22 +489,6 @@ function getRefFromURL() {
 }
 const refUsed = getRefFromURL();
 
-// Mapping barrio → lat/lng (centros aproximados de los distritos/barrios de Barcelona)
-const BARRIO_COORDS = {
-  'Eixample':            { lat: 41.3899, lng: 2.1635 },
-  'Gràcia':              { lat: 41.4036, lng: 2.1577 },
-  'Sant Antoni':         { lat: 41.3815, lng: 2.1604 },
-  'Poble-sec':           { lat: 41.3742, lng: 2.1634 },
-  'Born/Ribera':         { lat: 41.3849, lng: 2.1817 },
-  'Gòtic':               { lat: 41.3825, lng: 2.1769 },
-  'Raval':               { lat: 41.3804, lng: 2.1689 },
-  'Barceloneta':         { lat: 41.3795, lng: 2.1899 },
-  'Poblenou':            { lat: 41.4032, lng: 2.1996 },
-  'Sants':               { lat: 41.3759, lng: 2.1389 },
-  'Sant Andreu':         { lat: 41.4350, lng: 2.1888 },
-  'Sarrià-Sant Gervasi': { lat: 41.4014, lng: 2.1320 },
-};
-
 // Setear max date del input fecha_nacimiento a hace 18 años exactos
 (function setMaxFechaNacimiento() {
   const dateEl = document.getElementById('f-fecha-nacimiento');
@@ -548,7 +524,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
   const orientation = document.getElementById('f-orientation').value;
   const busco = document.getElementById('f-busco').value;
   const idiomas = getSelectedIdiomas();
-  const barrio = document.getElementById('f-barrio').value;
+  const ciudad = document.getElementById('ciudad').value;
   const profesion = document.getElementById('f-profesion').value.trim();
   const bio = document.getElementById('f-bio').value.trim();
   const intencion = document.getElementById('f-intencion').value;
@@ -584,9 +560,6 @@ document.getElementById('main-form').addEventListener('submit', async function(e
     }
   }
 
-  // Coords del barrio (todos los barrios listados están en BARRIO_COORDS)
-  const coords = BARRIO_COORDS[barrio] || null;
-
   // Cálculo de puntos: solo registro + bonus referido (resto se gana en la app)
   let pts = 50;
   if (refUsed) pts += 200;
@@ -595,12 +568,16 @@ document.getElementById('main-form').addEventListener('submit', async function(e
   const ref = genRef();
 
   try {
-    // Refrescar realCount justo antes del INSERT y calcular posición visible.
+    // Refrescar realCount justo antes del INSERT.
+    // Usado para dos cosas distintas:
+    //  - position REAL (count+1): orden interno; la lee el bridge para founder_position
+    //  - posición VISIBLE (computePosition): la que se muestra al usuario y va al email
     let realCountBefore = lastKnownRealCount;
     try {
       realCountBefore = await fetchRealCount();
     } catch(e) { /* usar el último conocido */ }
     const pos = computePosition(realCountBefore);
+    const realPosition = realCountBefore + 1;
 
     // Insertar en Supabase
     const { data, error } = await db.from('waitlist').insert({
@@ -611,15 +588,14 @@ document.getElementById('main-form').addEventListener('submit', async function(e
       orientation,
       busco,
       idiomas,
-      ciudad: barrio,
-      lat: coords ? coords.lat : null,
-      lng: coords ? coords.lng : null,
+      ciudad,
       profesion,
       bio,
       intencion,
       ref_code: ref,
       ref_used: refUsed || null,
-      puntos: pts
+      puntos: pts,
+      position: realPosition
     }).select().single();
 
     if (error) {
