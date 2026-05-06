@@ -806,7 +806,9 @@ document.getElementById('main-form').addEventListener('submit', async function(e
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
       body: JSON.stringify({ nombre, email, position: pos, ref_code: ref, puntos: pts })
-    }).catch(function() {});
+    })
+      .then(function(r) { if (!r.ok) console.error('Email send failed:', r.status, r.statusText); })
+      .catch(function(err) { console.error('Email send error:', err); });
 
     showPage('page2');
 
