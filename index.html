@@ -467,10 +467,10 @@ let currentCounterValue = 0;
 let lastKnownRealCount = 0;
 
 async function fetchRealCount() {
-  const { count } = await db.from('waitlist').select('*', { count: 'exact', head: true });
-  return (typeof count === 'number') ? count : 0;
+  const { data, error } = await db.rpc('get_waitlist_count');
+  if (error || data === null || data === undefined) return 0;
+  return Number(data) || 0;
 }
-
 async function loadCounter() {
   const el = document.getElementById('c-users');
   if (!el) return;
