@@ -565,59 +565,66 @@ document.getElementById('main-form').addEventListener('submit', async function(e
     }
   }
 
-  // Cálculo de puntos: solo registro + bonus referido (resto se gana en la app)
-  let pts = 50;
-  if (refUsed) pts += 200;
-
-  // Generar código de referido único
-  const ref = genRef();
-
   try {
-    // Refrescar realCount justo antes del INSERT.
-    // Usado para dos cosas distintas:
-    //  - position REAL (count+1): orden interno; la lee el bridge para founder_position
-    //  - posición VISIBLE (computePosition): la que se muestra al usuario y va al email
+    // Refrescar realCount — solo para contador visible y posición VISIBLE (organic + ratio).
+    // El position REAL en BD lo calcula el trigger waitlist_position_trigger del server.
+    // ref_code y puntos también se generan server-side ahora (no controlables por cliente).
     let realCountBefore = lastKnownRealCount;
     try {
       realCountBefore = await fetchRealCount();
     } catch(e) { /* usar el último conocido */ }
     const pos = computePosition(realCountBefore);
-    const realPosition = realCountBefore + 1;
 
-    // Insertar en Supabase
-    const { data, error } = await db.from('waitlist').insert({
-      nombre,
-      email,
-      fecha_nacimiento: fechaNacimiento,
-      genero,
-      orientation,
-      busco,
-      idiomas,
-      ciudad,
-      profesion,
-      bio,
-      intencion,
-      ref_code: ref,
-      ref_used: refUsed || null,
-      puntos: pts,
-      position: realPosition
-    }).select().single();
-
-    if (error) {
-      if (error.code === '23505') {
-        // Email duplicado
-        btn.textContent = 'Reservar mi lugar en Nexo →';
-        btn.disabled = false;
-        showError('Este email ya está registrado. ¡Ya tienes tu plaza reservada!');
-        return;
+    // Llamar a la edge function submit-waitlist:
+    // - server-side: rate limit por IP, validación, ref_code, puntos, premio al referidor
+    const { data: invokeResult, error: invokeError } = await db.functions.invoke('submit-waitlist', {
+      body: {
+        nombre,
+        email,
+        fecha_nacimiento: fechaNacimiento,
+        genero,
+        orientation,
+        busco,
+        idiomas,
+        ciudad,
+        profesion,
+        bio,
+        intencion,
+        ref_used: refUsed || null,
       }
-      throw error;
+    });
+
+    // Network / connection error
+    if (invokeError) {
+      console.error('submit-waitlist invoke error:', invokeError);
+      throw invokeError;
     }
 
-    // Si viene referido, sumar puntos al referidor
-    if (refUsed) {
-      await db.rpc('add_referral_points', { ref_code: refUsed }).catch(() => {});
+    // Function returned an error response
+    if (!invokeResult || invokeResult.error) {
+      const errCode = invokeResult && invokeResult.error;
+      btn.textContent = 'Reservar mi lugar en Nexo →';
+      btn.disabled = false;
+      if (errCode === 'email_already_registered') {
+        showError('Este email ya está registrado. ¡Ya tienes tu plaza reservada!');
+      } else if (errCode === 'rate_limited') {
+        const mins = (invokeResult && invokeResult.retry_after_minutes) || 60;
+        showError('Demasiados intentos desde tu conexión. Inténtalo de nuevo en ' + mins + ' minutos.');
+      } else if (errCode === 'underage') {
+        showError('Debes tener al menos 18 años para unirte a Nexo.');
+      } else if (errCode === 'invalid_email' || errCode === 'invalid_field' || errCode === 'invalid_body') {
+        console.error('submit-waitlist validation error:', invokeResult);
+        showError('Hay un campo con formato incorrecto. Revisa los datos.');
+      } else {
+        console.error('submit-waitlist error:', invokeResult);
+        showError('Algo fue mal. Inténtalo de nuevo en unos segundos.');
+      }
+      return;
     }
+
+    // Success: server devuelve ref_code (real), position (real), puntos (real)
+    const ref = invokeResult.ref_code;
+    const pts = invokeResult.puntos;
 
     userData = { nombre, email, genero, busco, ref, pos, pts };
 
@@ -693,7 +700,6 @@ function showPage(id) {
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
-function genRef() { return Math.random().toString(36).substr(2,6).toUpperCase(); }
 </script>
 </body>
 </html>
