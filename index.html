@@ -159,6 +159,42 @@ body.step-active .progress-bar { display:block; }
 .btn-step:disabled { opacity:0.35; cursor:not-allowed; }
 .btn-start { display:block; width:100%; padding:18px; background:linear-gradient(135deg,#f97316,#f59e0b 50%,#ec4899); border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; letter-spacing:2.5px; text-transform:uppercase; color:#fff; cursor:pointer; transition:opacity 0.2s,transform 0.15s; margin:8px 0 28px; }
 .btn-start:hover { opacity:0.9; transform:translateY(-1px); }
+
+/* Check position (sección colapsable al final de page1) */
+.check-position-wrap { margin-top:20px; text-align:center; animation:fadeUp 0.7s 0.5s ease both; }
+.check-position-toggle {
+  background:transparent; border:none; color:var(--muted);
+  font-size:13px; font-family:'DM Sans',sans-serif; cursor:pointer;
+  padding:10px 16px; text-decoration:underline;
+  transition:color 0.2s;
+}
+.check-position-toggle:hover { color:var(--gold2); }
+.check-position-content {
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:20px; margin-top:8px; text-align:left;
+  animation:fadeUp 0.3s ease;
+}
+.btn-check {
+  width:100%; padding:12px; background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3);
+  border-radius:8px; color:var(--gold2);
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; letter-spacing:1.5px;
+  text-transform:uppercase; cursor:pointer; margin-top:8px;
+  transition:background 0.2s;
+}
+.btn-check:hover { background:rgba(201,168,76,0.18); }
+.btn-check:disabled { opacity:0.5; cursor:not-allowed; }
+.check-result {
+  background:rgba(201,168,76,0.05); border:1px solid rgba(201,168,76,0.15);
+  border-radius:8px; padding:16px; margin-top:14px; font-size:13px; line-height:1.6;
+}
+.check-result.error {
+  background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.25); color:#fca5a5;
+}
+.check-result .cr-pos {
+  font-family:'Cormorant Garamond',serif; font-size:32px; color:var(--gold2); display:block; margin:6px 0;
+}
+.check-result .cr-detail { color:var(--muted); font-size:12px; }
+.check-result .cr-ref { font-family:monospace; color:var(--gold2); letter-spacing:2px; }
 @keyframes slideInRight { from { transform:translateX(20%); opacity:0; } to { transform:translateX(0); opacity:1; } }
 @keyframes slideInLeft  { from { transform:translateX(-20%); opacity:0; } to { transform:translateX(0); opacity:1; } }
 .page.entering-right { animation: slideInRight 250ms ease both; }
@@ -275,6 +311,21 @@ body.step-active .progress-bar { display:block; }
 
   <!-- CTA: empezar el wizard -->
   <button type="button" class="btn-start" onclick="goToStep(2)">Empezar →</button>
+
+  <!-- Consulta de posición -->
+  <div class="check-position-wrap">
+    <button class="check-position-toggle" type="button" id="check-toggle">
+      ¿Ya te inscribiste? Consulta tu posición
+    </button>
+    <div class="check-position-content" id="check-content" style="display:none">
+      <div class="field" style="margin-top:14px">
+        <label>Email con el que te inscribiste</label>
+        <input type="email" id="check-email" placeholder="tu@email.com" autocomplete="off">
+      </div>
+      <button type="button" class="btn-check" id="check-submit">Consultar →</button>
+      <div class="check-result" id="check-result" style="display:none"></div>
+    </div>
+  </div>
 
   <footer>
     © 2026 Nexo · Barcelona<br>
@@ -900,6 +951,93 @@ function restoreDraft() {
   // Restaurar y revalidar al cargar.
   restoreDraft();
   updateStepButtons();
+})();
+
+// ============================================================
+// CONSULTA DE POSICIÓN
+// ============================================================
+(function wireCheckPosition() {
+  const toggle = document.getElementById('check-toggle');
+  const content = document.getElementById('check-content');
+  const submitBtn = document.getElementById('check-submit');
+  const emailInput = document.getElementById('check-email');
+  const resultDiv = document.getElementById('check-result');
+
+  if (!toggle || !content || !submitBtn || !emailInput || !resultDiv) return;
+
+  toggle.addEventListener('click', function() {
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      toggle.textContent = '↑ Ocultar';
+      setTimeout(() => emailInput.focus(), 50);
+    } else {
+      content.style.display = 'none';
+      toggle.textContent = '¿Ya te inscribiste? Consulta tu posición';
+    }
+  });
+
+  submitBtn.addEventListener('click', async function() {
+    const email = emailInput.value.trim().toLowerCase();
+    if (!email || !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+      showCheckResult('Email inválido. Verifica el formato.', 'error');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Consultando...';
+    resultDiv.style.display = 'none';
+
+    try {
+      const { data, error } = await db.functions.invoke('check-my-position', {
+        body: { email }
+      });
+
+      if (error) {
+        showCheckResult('Algo fue mal. Inténtalo de nuevo en unos segundos.', 'error');
+        return;
+      }
+
+      if (data && data.success) {
+        const shareUrl = SITE_URL + '?ref=' + data.ref_code;
+        showCheckResult(
+          '<div>Hola <strong>' + escapeHtml(data.nombre) + '</strong>.</div>' +
+          '<span class="cr-pos">#' + data.position + '</span>' +
+          '<div class="cr-detail">en la lista, con <strong>' + data.puntos + '</strong> puntos.</div>' +
+          '<div class="cr-detail" style="margin-top:12px">Tu código: <span class="cr-ref">' + escapeHtml(data.ref_code) + '</span></div>' +
+          '<div class="cr-detail" style="margin-top:6px;word-break:break-all">' + escapeHtml(shareUrl) + '</div>',
+          'success'
+        );
+      } else {
+        const errCode = data && data.error;
+        if (errCode === 'not_found') {
+          showCheckResult('No encontramos ninguna inscripción con este email. ¿Te inscribiste con otro?', 'error');
+        } else if (errCode === 'rate_limited') {
+          const mins = (data && data.retry_after_minutes) || 60;
+          showCheckResult('Demasiadas consultas. Inténtalo en ' + mins + ' minutos.', 'error');
+        } else if (errCode === 'invalid_email') {
+          showCheckResult('Email inválido.', 'error');
+        } else {
+          showCheckResult('Algo fue mal. Inténtalo de nuevo.', 'error');
+        }
+      }
+    } catch (err) {
+      console.error('check-my-position error:', err);
+      showCheckResult('Algo fue mal. Inténtalo de nuevo.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Consultar →';
+    }
+  });
+
+  function showCheckResult(html, type) {
+    resultDiv.innerHTML = html;
+    resultDiv.className = 'check-result' + (type === 'error' ? ' error' : '');
+    resultDiv.style.display = 'block';
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
 })();
 </script>
 </body>
