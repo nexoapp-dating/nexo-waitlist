@@ -267,72 +267,52 @@ footer a { color:inherit; text-decoration:none; }
 
       <div class="field"><label>Email</label><input type="email" id="f-email" placeholder="tu@email.com" required></div>
 
-      <div class="field-row">
-        <div class="field"><label>Género</label>
-          <select id="f-genero" required>
-            <option value="" disabled selected>Selecciona</option>
-            <option value="mujer">Mujer</option>
-            <option value="hombre">Hombre</option>
-            <option value="no-binarie">No binarie</option>
-            <option value="otro">Otro</option>
-          </select>
-        </div>
-        <div class="field"><label>Orientación</label>
-          <select id="f-orientation" required>
-            <option value="" disabled selected>Selecciona</option>
-            <option value="heterosexual">Heterosexual</option>
-            <option value="bisexual">Bisexual</option>
-            <option value="pansexual">Pansexual</option>
-            <option value="gay">Gay</option>
-            <option value="lesbiana">Lesbiana</option>
-            <option value="otra">Otra</option>
-          </select>
-        </div>
+      <div class="field"><label>Género</label>
+        <select id="f-genero" required>
+          <option value="" disabled selected>Selecciona</option>
+          <option value="male">Hombre</option>
+          <option value="female">Mujer</option>
+          <option value="non-binary">No binario</option>
+          <option value="prefer_not_say">Prefiero no decirlo</option>
+        </select>
       </div>
 
       <div class="field"><label>Busco</label>
         <select id="f-busco" required>
           <option value="" disabled selected>Selecciona</option>
-          <option value="hombres">Hombres</option>
-          <option value="mujeres">Mujeres</option>
-          <option value="ambos">Ambos</option>
-          <option value="todos">Todos los géneros</option>
+          <option value="male">Hombres</option>
+          <option value="female">Mujeres</option>
+          <option value="both">Ambos</option>
         </select>
       </div>
 
       <div class="field">
         <label>Idiomas (al menos 1)</label>
         <div class="chips-wrap" id="chips-idiomas" style="margin-bottom:0;margin-top:4px">
-          <div class="chip" data-val="es">Castellano</div>
-          <div class="chip" data-val="ca">Català</div>
-          <div class="chip" data-val="en">English</div>
-          <div class="chip" data-val="otros">Otros</div>
+          <div class="chip" data-val="Español">Español</div>
+          <div class="chip" data-val="Catalán">Catalán</div>
+          <div class="chip" data-val="Inglés">Inglés</div>
+          <div class="chip" data-val="Francés">Francés</div>
+          <div class="chip" data-val="Alemán">Alemán</div>
+          <div class="chip" data-val="Italiano">Italiano</div>
+          <div class="chip" data-val="Portugués">Portugués</div>
+          <div class="chip" data-val="Otro">Otro</div>
         </div>
       </div>
 
       <!-- Sección 2 — Tu mundo -->
       <div class="form-section-label section-2">Tu mundo</div>
 
-      <div class="field"><label>¿De dónde eres?</label>
-        <select id="f-ciudad" required>
-          <option value="" disabled selected>Selecciona dónde vives</option>
-          <option value="barcelona_ciudad">Barcelona ciudad</option>
-          <option value="barcelona_metropolitana">Área metropolitana (Hospitalet, Badalona, Castelldefels, Santa Coloma, Sant Cugat, etc.)</option>
-          <option value="otra_espana">Otra ciudad de España</option>
-          <option value="otra">Otro país</option>
-        </select>
-      </div>
+      <div class="field"><label>¿De dónde eres?</label><input type="text" id="f-ciudad" placeholder="Tu ciudad" required></div>
 
       <div class="field"><label>Profesión</label><input type="text" id="f-profesion" placeholder="Médico, diseñadora..." required></div>
-
-      <div class="field"><label>Bio breve (max 100)</label><input type="text" id="f-bio" placeholder="Una frase sobre ti..." maxlength="100" required></div>
 
       <div class="field"><label>¿Qué buscas?</label>
         <select id="f-intencion" required>
           <option value="" disabled selected>Intención</option>
-          <option value="serio">Algo serio</option>
-          <option value="conocer">Conocer gente</option>
-          <option value="abierto">Estoy abierto/a</option>
+          <option value="Algo serio">Algo serio</option>
+          <option value="Algo casual">Algo casual</option>
+          <option value="Estoy abierto/a">Estoy abierto/a</option>
         </select>
       </div>
 
@@ -525,13 +505,13 @@ document.getElementById('main-form').addEventListener('submit', async function(e
   const nombre = document.getElementById('f-nombre').value.trim();
   const fechaNacimiento = document.getElementById('f-fecha-nacimiento').value;
   const email = document.getElementById('f-email').value.trim().toLowerCase();
-  const genero = document.getElementById('f-genero').value;
-  const orientation = document.getElementById('f-orientation').value;
+  // "prefer_not_say" → null para que la edge function lo trate como genero=NULL.
+  const generoRaw = document.getElementById('f-genero').value;
+  const genero = generoRaw === 'prefer_not_say' ? null : generoRaw;
   const busco = document.getElementById('f-busco').value;
   const idiomas = getSelectedIdiomas();
-  const ciudad = document.getElementById('f-ciudad').value;
+  const ciudad = document.getElementById('f-ciudad').value.trim();
   const profesion = document.getElementById('f-profesion').value.trim();
-  const bio = document.getElementById('f-bio').value.trim();
   const intencion = document.getElementById('f-intencion').value;
 
   // Validación: email format
@@ -583,13 +563,11 @@ document.getElementById('main-form').addEventListener('submit', async function(e
         email,
         fecha_nacimiento: fechaNacimiento,
         genero,
-        orientation,
         busco,
-        idiomas,
         ciudad,
         profesion,
-        bio,
         intencion,
+        idiomas,
         ref_used: refUsed || null,
       }
     });
