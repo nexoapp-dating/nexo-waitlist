@@ -998,20 +998,14 @@ function restoreDraft() {
       }
 
       if (data && data.success) {
-        const shareUrl = SITE_URL + '?ref=' + data.ref_code;
         showCheckResult(
-          '<div>Hola <strong>' + escapeHtml(data.nombre) + '</strong>.</div>' +
-          '<span class="cr-pos">#' + data.position + '</span>' +
-          '<div class="cr-detail">en la lista, con <strong>' + data.puntos + '</strong> puntos.</div>' +
-          '<div class="cr-detail" style="margin-top:12px">Tu código: <span class="cr-ref">' + escapeHtml(data.ref_code) + '</span></div>' +
-          '<div class="cr-detail" style="margin-top:6px;word-break:break-all">' + escapeHtml(shareUrl) + '</div>',
+          '<div style="font-size:15px;line-height:1.5">Si estás inscrito, recibirás un email con tus datos en unos segundos.</div>' +
+          '<div class="cr-detail" style="margin-top:10px">Revisa también la carpeta de spam.</div>',
           'success'
         );
       } else {
         const errCode = data && data.error;
-        if (errCode === 'not_found') {
-          showCheckResult('No encontramos ninguna inscripción con este email. ¿Te inscribiste con otro?', 'error');
-        } else if (errCode === 'rate_limited') {
+        if (errCode === 'rate_limited') {
           const mins = (data && data.retry_after_minutes) || 60;
           showCheckResult('Demasiadas consultas. Inténtalo en ' + mins + ' minutos.', 'error');
         } else if (errCode === 'invalid_email') {
