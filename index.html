@@ -85,6 +85,11 @@ h1 em { font-style:italic; background:linear-gradient(135deg,#f97316,#f59e0b,#ec
 .ai-note { background:rgba(249,115,22,0.05); border:1px solid rgba(249,115,22,0.1); border-radius:8px; padding:12px 14px; font-size:11px; color:var(--muted); line-height:1.6; margin-top:10px; text-align:center; }
 .ai-note strong { color:var(--text); }
 
+/* AI banner (editorial separator) */
+.ai-banner { text-align:center; margin:40px 0; animation:fadeUp 0.7s 0.35s ease both; }
+.ai-banner-divider { font-size:14px; color:var(--muted); letter-spacing:4px; margin:8px 0; opacity:0.6; }
+.ai-banner-text { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:24px; font-weight:300; color:var(--gold2); margin:8px 0; }
+
 /* Form */
 .form-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px 24px; margin-bottom:24px; animation:fadeUp 0.7s 0.35s ease both; }
 .form-title { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:400; margin-bottom:5px; }
@@ -212,25 +217,25 @@ body.step-active .progress-bar { display:block; }
       <div class="concept-item">
         <div class="ci-icon">◻</div>
         <div>
-          <div class="ci-title">Sin swipes infinitos</div>
-          <div class="ci-desc">5 personas cada lunes. Elegidas por compatibilidad real. No por quién pagó más visibilidad.</div>
+          <div class="ci-title">Tus matches llegan a ti, no al revés</div>
+          <div class="ci-desc">Cada lunes, hasta 3 matches escogidos por compatibilidad real, gracias a un test pensado para emparejar personalidades. Si una semana no hay nadie, te lo decimos.</div>
         </div>
       </div>
       <div class="concept-item highlight">
         <div class="ci-icon">◈</div>
         <div>
-          <div class="ci-title">Compatibilidad real, no química superficial</div>
-          <div class="ci-desc">Un test de personalidad define cómo te relacionas. Cruzamos tu perfil con el de los demás en 13 dimensiones.</div>
-        </div>
-      </div>
-      <div class="concept-item">
-        <div class="ci-icon">◇</div>
-        <div>
-          <div class="ci-title">Adiós al ghosting</div>
-          <div class="ci-desc">Los matches tienen tiempo para hablar. Si no fluye, se cierra con un mensaje de adiós. Sin silencios.</div>
+          <div class="ci-title">Se acabaron los perfiles falsos</div>
+          <div class="ci-desc">Cada perfil pasa verificación antes de llegar a ti. Hablas con quien crees que hablas.</div>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- AI banner -->
+  <div class="ai-banner">
+    <div class="ai-banner-divider">———— ◇ ————</div>
+    <p class="ai-banner-text">Mejorando la experiencia con IA</p>
+    <div class="ai-banner-divider">———— ◇ ————</div>
   </div>
 
   <!-- Rewards -->
@@ -261,7 +266,7 @@ body.step-active .progress-bar { display:block; }
       </div>
     </div>
     <div class="ai-note">
-      <strong>Hasta 3 matches automáticos cada lunes.</strong> Hasta 4 con Premium.<br>Modo Weekend abierto los fines de semana.
+      Modo Weekend cada finde, de jueves a domingo.
     </div>
   </div>
 
