@@ -675,6 +675,8 @@ document.getElementById('main-form').addEventListener('submit', async function(e
         showError('Debes tener al menos 18 años para unirte a Nexo.');
       } else if (errCode === 'invalid_field' && invokeResult.detail === 'ref_used_format') {
         showError('El código de invitación no es válido. Debe tener 6 caracteres (letras y números).');
+      } else if (errCode === 'ref_code_not_found') {
+        showError('Este código de invitación no existe. Verifica que lo has escrito bien.');
       } else if (errCode === 'invalid_email' || errCode === 'invalid_field' || errCode === 'invalid_body') {
         console.error('submit-waitlist validation error:', invokeResult);
         showError('Hay un campo con formato incorrecto. Revisa los datos.');
