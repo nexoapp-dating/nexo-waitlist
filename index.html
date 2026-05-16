@@ -377,6 +377,19 @@ body.step-active .progress-bar { display:block; }
       <div class="pts-label">Cómo subir posiciones</div>
       <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Registrarte</div><span class="pts-val">+50 pts</span></div>
       <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Por cada amigo que invites</div><span class="pts-val">+300 pts</span></div>
+      <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Con código de invitación</div><span class="pts-val">+200 pts</span></div>
+    </div>
+
+    <div class="field" style="margin-top:16px">
+      <label>¿Tienes un código de invitación? (opcional, +200 pts)</label>
+      <input
+        type="text"
+        id="f-ref-code"
+        placeholder="6 caracteres"
+        maxlength="6"
+        autocomplete="off"
+        style="text-transform:uppercase; letter-spacing:2px"
+      >
     </div>
 
     <div class="step-buttons">
@@ -528,12 +541,19 @@ async function loadCounter() {
 }
 loadCounter();
 
-// Leer ref de la URL si viene de un enlace de referido
+// Leer ref de la URL si viene de un enlace de referido.
+// Si está presente, pre-rellena el input #f-ref-code (el user puede borrarlo/cambiarlo).
+// El valor final que se envía al backend se lee del input en el submit handler.
 function getRefFromURL() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('ref') || '';
+  return (params.get('ref') || '').trim().toUpperCase();
 }
-const refUsed = getRefFromURL();
+(function prefillRefCode() {
+  const fromURL = getRefFromURL();
+  if (!fromURL) return;
+  const el = document.getElementById('f-ref-code');
+  if (el && !el.value) el.value = fromURL;
+})();
 
 // Setear max date del input fecha_nacimiento a hace 18 años exactos
 (function setMaxFechaNacimiento() {
@@ -574,6 +594,8 @@ document.getElementById('main-form').addEventListener('submit', async function(e
   const ciudad = document.getElementById('f-ciudad').value.trim();
   const profesion = document.getElementById('f-profesion').value.trim();
   const intencion = document.getElementById('f-intencion').value;
+  const refCodeInput = (document.getElementById('f-ref-code')?.value || '').trim().toUpperCase();
+  const refUsed = refCodeInput.length === 6 ? refCodeInput : null;
 
   // Validación: email format
   if (!isValidEmail(email)) {
@@ -651,6 +673,8 @@ document.getElementById('main-form').addEventListener('submit', async function(e
         showError('Demasiados intentos desde tu conexión. Inténtalo de nuevo en ' + mins + ' minutos.');
       } else if (errCode === 'underage') {
         showError('Debes tener al menos 18 años para unirte a Nexo.');
+      } else if (errCode === 'invalid_field' && invokeResult.detail === 'ref_used_format') {
+        showError('El código de invitación no es válido. Debe tener 6 caracteres (letras y números).');
       } else if (errCode === 'invalid_email' || errCode === 'invalid_field' || errCode === 'invalid_body') {
         console.error('submit-waitlist validation error:', invokeResult);
         showError('Hay un campo con formato incorrecto. Revisa los datos.');
@@ -831,6 +855,7 @@ function saveDraft() {
     ciudad:            document.getElementById('f-ciudad')?.value || '',
     profesion:         document.getElementById('f-profesion')?.value || '',
     intencion:         document.getElementById('f-intencion')?.value || '',
+    ref_code:          document.getElementById('f-ref-code')?.value || '',
   };
   try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch (e) {}
 }
@@ -848,6 +873,7 @@ function restoreDraft() {
   set('f-ciudad',            draft.ciudad);
   set('f-profesion',         draft.profesion);
   set('f-intencion',         draft.intencion);
+  set('f-ref-code',          draft.ref_code);
   if (Array.isArray(draft.idiomas)) {
     draft.idiomas.forEach(val => {
       const chip = document.querySelector('#chips-idiomas .chip[data-val="' + CSS.escape(val) + '"]');
@@ -858,7 +884,7 @@ function restoreDraft() {
 
 // ── Wire inputs: cada cambio guarda draft + revalida ────────────────
 (function wireWizard() {
-  const ids = ['f-nombre','f-fecha-nacimiento','f-email','f-genero','f-busco','f-ciudad','f-profesion','f-intencion'];
+  const ids = ['f-nombre','f-fecha-nacimiento','f-email','f-genero','f-busco','f-ciudad','f-profesion','f-intencion','f-ref-code'];
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
