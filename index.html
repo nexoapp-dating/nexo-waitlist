@@ -103,13 +103,6 @@ select option { background:#1a1a24; }
 .pts-val { font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--gold2); }
 .pts-dot { width:3px; height:3px; border-radius:50%; background:var(--orange); opacity:0.4; margin-right:8px; flex-shrink:0; }
 .pts-left { display:flex; align-items:center; }
-.form-section-label { font-family:'Cormorant Garamond',serif; font-size:13px; font-weight:400; color:var(--orange); letter-spacing:2.5px; text-transform:uppercase; margin:4px 0 14px; }
-.form-section-label.section-2 { margin-top:22px; padding-top:18px; border-top:1px solid var(--border); }
-
-.btn-main { width:100%; padding:15px; background:linear-gradient(135deg,#f97316,#f59e0b 50%,#ec4899); border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#fff; cursor:pointer; transition:opacity 0.2s,transform 0.15s; }
-.btn-main:hover { opacity:0.9; transform:translateY(-1px); }
-.btn-main:active { transform:translateY(0); }
-
 footer { text-align:center; font-size:11px; color:rgba(107,104,114,0.4); line-height:1.9; }
 footer a { color:inherit; text-decoration:none; }
 
@@ -146,6 +139,26 @@ footer a { color:inherit; text-decoration:none; }
 .chip.selected { background:rgba(249,115,22,0.12); border-color:rgba(249,115,22,0.4); color:var(--text); }
 
 /* Animations */
+/* Multi-step wizard */
+.progress-bar { position:fixed; top:0; left:0; right:0; height:5px; background:rgba(255,255,255,0.05); overflow:hidden; z-index:50; display:none; }
+body.step-active .progress-bar { display:block; }
+.progress-fill { height:100%; background:linear-gradient(90deg,#f97316,#ec4899); transition:width 0.4s ease; width:0%; }
+.step-title { font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:300; line-height:1.15; margin-bottom:6px; }
+.step-title em { font-style:italic; background:linear-gradient(135deg,#f97316,#f59e0b,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.step-sub { font-size:11px; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; margin-bottom:24px; }
+.step-buttons { display:flex; justify-content:space-between; align-items:stretch; gap:10px; margin-top:24px; }
+.btn-back { background:transparent; border:1px solid var(--border); color:var(--muted); padding:14px 18px; border-radius:10px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:400; transition:all 0.2s; white-space:nowrap; }
+.btn-back:hover { background:rgba(255,255,255,0.04); color:var(--text); }
+.btn-step { flex:1; padding:15px; background:linear-gradient(135deg,#f97316,#f59e0b 50%,#ec4899); border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#fff; cursor:pointer; transition:opacity 0.2s,transform 0.15s; }
+.btn-step:hover:not(:disabled) { opacity:0.9; transform:translateY(-1px); }
+.btn-step:disabled { opacity:0.35; cursor:not-allowed; }
+.btn-start { display:block; width:100%; padding:18px; background:linear-gradient(135deg,#f97316,#f59e0b 50%,#ec4899); border:none; border-radius:12px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; letter-spacing:2.5px; text-transform:uppercase; color:#fff; cursor:pointer; transition:opacity 0.2s,transform 0.15s; margin:8px 0 28px; }
+.btn-start:hover { opacity:0.9; transform:translateY(-1px); }
+@keyframes slideInRight { from { transform:translateX(20%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+@keyframes slideInLeft  { from { transform:translateX(-20%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+.page.entering-right { animation: slideInRight 250ms ease both; }
+.page.entering-left  { animation: slideInLeft 250ms ease both; }
+
 @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
 
 /* Responsive */
@@ -153,6 +166,9 @@ footer a { color:inherit; text-decoration:none; }
 </style>
 </head>
 <body>
+
+<!-- Barra de progreso global (solo visible en page2 y page3) -->
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
 
 <!-- ============================================================
      PAGE 1 — LANDING
@@ -169,9 +185,9 @@ footer a { color:inherit; text-decoration:none; }
 
   <!-- Hero -->
   <div class="hero">
-    <div class="location-pill">📍 Barcelona · 1 Junio 2026</div>
+    <div class="location-pill">📍 Barcelona · Lanzamiento 2026</div>
     <h1>Citas sin swipes.<br><em>Conexiones reales.</em></h1>
-    <p class="sub">Cada lunes recibes 5 matches automáticos seleccionados según tus preferencias. Sin scroll infinito. Sin perder el tiempo.</p>
+    <p class="sub">Cada lunes recibes hasta 3 matches automáticos seleccionados según tus preferencias. Sin scroll infinito. Sin perder el tiempo.</p>
     <p class="tagline">Empieza en Barcelona. Llega donde tú estés.</p>
   </div>
 
@@ -245,86 +261,12 @@ footer a { color:inherit; text-decoration:none; }
       </div>
     </div>
     <div class="ai-note">
-      Premium se activará cuando la comunidad alcance una masa crítica activa. Mientras tanto, todos disfrutamos Nexo gratis.
-      <br><br>
-      <strong>5 matches semanales y 10 likes diarios.</strong> Verifica tu perfil para acceder a más.
+      <strong>Hasta 3 matches automáticos cada lunes.</strong> Hasta 4 con Premium.<br>Modo Weekend abierto los fines de semana.
     </div>
   </div>
 
-  <!-- Form -->
-  <div class="form-card">
-    <div class="form-title">Reserva tu lugar</div>
-    <p class="form-sub">Cuanto más completes ahora, mejor posición — y más cerca estarás de los Founders Originales.</p>
-
-    <form id="main-form">
-
-      <!-- Sección 1 — Quién eres -->
-      <div class="form-section-label">Quién eres</div>
-
-      <div class="field"><label>Nombre</label><input type="text" id="f-nombre" placeholder="Tu nombre" required></div>
-
-      <div class="field"><label>Fecha de nacimiento</label><input type="date" id="f-fecha-nacimiento" required></div>
-
-      <div class="field"><label>Email</label><input type="email" id="f-email" placeholder="tu@email.com" required></div>
-
-      <div class="field"><label>Género</label>
-        <select id="f-genero" required>
-          <option value="" disabled selected>Selecciona</option>
-          <option value="male">Hombre</option>
-          <option value="female">Mujer</option>
-          <option value="non-binary">No binario</option>
-          <option value="prefer_not_say">Prefiero no decirlo</option>
-        </select>
-      </div>
-
-      <div class="field"><label>Busco</label>
-        <select id="f-busco" required>
-          <option value="" disabled selected>Selecciona</option>
-          <option value="male">Hombres</option>
-          <option value="female">Mujeres</option>
-          <option value="both">Ambos</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label>Idiomas (al menos 1)</label>
-        <div class="chips-wrap" id="chips-idiomas" style="margin-bottom:0;margin-top:4px">
-          <div class="chip" data-val="Español">Español</div>
-          <div class="chip" data-val="Catalán">Catalán</div>
-          <div class="chip" data-val="Inglés">Inglés</div>
-          <div class="chip" data-val="Francés">Francés</div>
-          <div class="chip" data-val="Alemán">Alemán</div>
-          <div class="chip" data-val="Italiano">Italiano</div>
-          <div class="chip" data-val="Portugués">Portugués</div>
-          <div class="chip" data-val="Otro">Otro</div>
-        </div>
-      </div>
-
-      <!-- Sección 2 — Tu mundo -->
-      <div class="form-section-label section-2">Tu mundo</div>
-
-      <div class="field"><label>¿De dónde eres?</label><input type="text" id="f-ciudad" placeholder="Tu ciudad" required></div>
-
-      <div class="field"><label>Profesión</label><input type="text" id="f-profesion" placeholder="Médico, diseñadora..." required></div>
-
-      <div class="field"><label>¿Qué buscas?</label>
-        <select id="f-intencion" required>
-          <option value="" disabled selected>Intención</option>
-          <option value="Algo serio">Algo serio</option>
-          <option value="Algo casual">Algo casual</option>
-          <option value="Estoy abierto/a">Estoy abierto/a</option>
-        </select>
-      </div>
-
-      <div class="pts-section">
-        <div class="pts-label">Cómo subir posiciones</div>
-        <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Registrarte</div><span class="pts-val">+50 pts</span></div>
-        <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Por cada amigo que invites</div><span class="pts-val">+300 pts</span></div>
-      </div>
-
-      <button type="submit" class="btn-main">Reservar mi lugar en Nexo →</button>
-    </form>
-  </div>
+  <!-- CTA: empezar el wizard -->
+  <button type="button" class="btn-start" onclick="goToStep(2)">Empezar →</button>
 
   <footer>
     © 2026 Nexo · Barcelona<br>
@@ -335,9 +277,120 @@ footer a { color:inherit; text-decoration:none; }
 </div>
 
 <!-- ============================================================
-     PAGE 2 — CONFIRMACIÓN
+     PAGE 2 + PAGE 3 — WIZARD (envueltos en un solo <form>)
 ============================================================ -->
+<form id="main-form" novalidate>
+
+<!-- ── PAGE 2 — DATOS PERSONALES ── -->
 <div class="page" id="page2">
+<div class="glow"></div>
+<div class="wrap" style="padding-top:38px">
+
+  <div class="form-card">
+    <h2 class="step-title">Cuéntanos <em>quién eres</em></h2>
+    <p class="step-sub">Paso 1 de 2</p>
+
+    <div class="field"><label>Nombre</label><input type="text" id="f-nombre" placeholder="Tu nombre"></div>
+
+    <div class="field"><label>Fecha de nacimiento</label><input type="date" id="f-fecha-nacimiento"></div>
+
+    <div class="field"><label>Email</label><input type="email" id="f-email" placeholder="tu@email.com"></div>
+
+    <div class="field"><label>Género</label>
+      <select id="f-genero">
+        <option value="" disabled selected>Selecciona</option>
+        <option value="male">Hombre</option>
+        <option value="female">Mujer</option>
+        <option value="non-binary">No binario</option>
+        <option value="prefer_not_say">Prefiero no decirlo</option>
+      </select>
+    </div>
+
+    <div class="field"><label>Busco</label>
+      <select id="f-busco">
+        <option value="" disabled selected>Selecciona</option>
+        <option value="male">Hombres</option>
+        <option value="female">Mujeres</option>
+        <option value="both">Ambos</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Idiomas (al menos 1)</label>
+      <div class="chips-wrap" id="chips-idiomas" style="margin-bottom:0;margin-top:4px">
+        <div class="chip" data-val="Español">Español</div>
+        <div class="chip" data-val="Catalán">Catalán</div>
+        <div class="chip" data-val="Inglés">Inglés</div>
+        <div class="chip" data-val="Francés">Francés</div>
+        <div class="chip" data-val="Alemán">Alemán</div>
+        <div class="chip" data-val="Italiano">Italiano</div>
+        <div class="chip" data-val="Portugués">Portugués</div>
+        <div class="chip" data-val="Otro">Otro</div>
+      </div>
+    </div>
+
+    <div class="step-buttons">
+      <button type="button" class="btn-back" onclick="goToStep(1)">← Atrás</button>
+      <button type="button" class="btn-step" id="btn-step2-next" onclick="goToStep(3)" disabled>Siguiente →</button>
+    </div>
+  </div>
+
+  <footer>
+    © 2026 Nexo · Barcelona<br>
+    <a href="#">Privacidad</a> · <a href="#">Contacto</a>
+  </footer>
+
+</div>
+</div>
+
+<!-- ── PAGE 3 — PREFERENCIAS ── -->
+<div class="page" id="page3">
+<div class="glow"></div>
+<div class="wrap" style="padding-top:38px">
+
+  <div class="form-card">
+    <h2 class="step-title">Tu mundo y lo <em>que buscas</em></h2>
+    <p class="step-sub">Paso 2 de 2</p>
+
+    <div class="field"><label>¿De dónde eres?</label><input type="text" id="f-ciudad" placeholder="Tu ciudad"></div>
+
+    <div class="field"><label>Profesión</label><input type="text" id="f-profesion" placeholder="Médico, diseñadora..."></div>
+
+    <div class="field"><label>¿Qué buscas?</label>
+      <select id="f-intencion">
+        <option value="" disabled selected>Intención</option>
+        <option value="Algo serio">Algo serio</option>
+        <option value="Algo casual">Algo casual</option>
+        <option value="Estoy abierto/a">Estoy abierto/a</option>
+      </select>
+    </div>
+
+    <div class="pts-section">
+      <div class="pts-label">Cómo subir posiciones</div>
+      <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Registrarte</div><span class="pts-val">+50 pts</span></div>
+      <div class="pts-row"><div class="pts-left"><div class="pts-dot"></div>Por cada amigo que invites</div><span class="pts-val">+300 pts</span></div>
+    </div>
+
+    <div class="step-buttons">
+      <button type="button" class="btn-back" onclick="goToStep(2)">← Atrás</button>
+      <button type="submit" class="btn-step" id="btn-submit" disabled>Reservar mi sitio en Nexo →</button>
+    </div>
+  </div>
+
+  <footer>
+    © 2026 Nexo · Barcelona<br>
+    <a href="#">Privacidad</a> · <a href="#">Contacto</a>
+  </footer>
+
+</div>
+</div>
+
+</form>
+
+<!-- ============================================================
+     PAGE 4 — CONFIRMACIÓN
+============================================================ -->
+<div class="page" id="page4">
 <div class="glow"></div>
 <div class="p2-wrap">
 
@@ -352,7 +405,7 @@ footer a { color:inherit; text-decoration:none; }
   <!-- Referral -->
   <div class="ref-card">
     <div class="ref-title">Tu código de invitación</div>
-    <p class="ref-desc">Cada amigo que use tu código te sube +300 puntos. Cuanto más arriba, mejor recompensa el 1 de junio.</p>
+    <p class="ref-desc">Cada amigo que use tu código te sube +300 puntos. Cuanto más arriba, mejor recompensa al lanzamiento.</p>
     <div class="ref-code-wrap" id="p2-reflink">nexoapp.es/join?ref=XXXXXX</div>
     <button class="ref-copy-btn" onclick="copyRef()">Copiar enlace</button>
     <div class="share-row">
@@ -498,7 +551,7 @@ function isValidEmail(s) {
 
 document.getElementById('main-form').addEventListener('submit', async function(e) {
   e.preventDefault();
-  const btn = document.querySelector('.btn-main');
+  const btn = document.getElementById('btn-submit');
   btn.textContent = 'Guardando...';
   btn.disabled = true;
 
@@ -516,7 +569,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
 
   // Validación: email format
   if (!isValidEmail(email)) {
-    btn.textContent = 'Reservar mi lugar en Nexo →';
+    btn.textContent = 'Reservar mi sitio en Nexo →';
     btn.disabled = false;
     showError('Introduce un email válido.');
     return;
@@ -524,7 +577,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
 
   // Validación: idiomas al menos 1
   if (idiomas.length === 0) {
-    btn.textContent = 'Reservar mi lugar en Nexo →';
+    btn.textContent = 'Reservar mi sitio en Nexo →';
     btn.disabled = false;
     showError('Selecciona al menos un idioma.');
     return;
@@ -538,7 +591,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
     const m = today.getMonth() - dob.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
     if (age < 18) {
-      btn.textContent = 'Reservar mi lugar en Nexo →';
+      btn.textContent = 'Reservar mi sitio en Nexo →';
       btn.disabled = false;
       showError('Debes tener al menos 18 años para unirte a Nexo.');
       return;
@@ -581,7 +634,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
     // Function returned an error response
     if (!invokeResult || invokeResult.error) {
       const errCode = invokeResult && invokeResult.error;
-      btn.textContent = 'Reservar mi lugar en Nexo →';
+      btn.textContent = 'Reservar mi sitio en Nexo →';
       btn.disabled = false;
       if (errCode === 'email_already_registered') {
         showError('Este email ya está registrado. ¡Ya tienes tu plaza reservada!');
@@ -628,11 +681,13 @@ document.getElementById('main-form').addEventListener('submit', async function(e
       .then(function(r) { if (!r.ok) console.error('Email send failed:', r.status, r.statusText); })
       .catch(function(err) { console.error('Email send error:', err); });
 
-    showPage('page2');
+    // Limpiar draft del sessionStorage tras éxito.
+    try { sessionStorage.removeItem('nexo_waitlist_draft'); } catch (e) {}
+    showPage('page4', 'forward');
 
   } catch(err) {
     console.error(err);
-    btn.textContent = 'Reservar mi lugar en Nexo →';
+    btn.textContent = 'Reservar mi sitio en Nexo →';
     btn.disabled = false;
     showError('Algo fue mal. Inténtalo de nuevo en unos segundos.');
   }
@@ -644,7 +699,8 @@ function showError(msg) {
     el = document.createElement('div');
     el.id = 'form-error';
     el.style.cssText = 'background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:10px 14px;font-size:12px;color:#fca5a5;margin-bottom:12px;text-align:center;';
-    document.querySelector('.btn-main').before(el);
+    const target = document.querySelector('#page3 .step-buttons');
+    if (target) target.before(el);
   }
   el.textContent = msg;
   el.style.display = 'block';
@@ -671,13 +727,144 @@ function shareGen() {
 // Esos pasos se completarán dentro de la app durante el modo pre-launch.
 
 // ============================================================
-// UTILS
+// MULTI-STEP WIZARD
 // ============================================================
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
+const DRAFT_KEY = 'nexo_waitlist_draft';
+
+function showPage(id, direction) {
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active', 'entering-right', 'entering-left');
+  });
+  const next = document.getElementById(id);
+  if (!next) return;
+  next.classList.add('active');
+  if (direction === 'forward')   next.classList.add('entering-right');
+  else if (direction === 'back') next.classList.add('entering-left');
+  window.scrollTo(0, 0);
+  setTimeout(() => next.classList.remove('entering-right', 'entering-left'), 280);
+
+  // Progress bar global: width animado por CSS (0.4s ease), visibilidad via body class.
+  const fill = document.getElementById('progress-fill');
+  if (id === 'page2') {
+    document.body.classList.add('step-active');
+    if (fill) fill.style.width = '50%';
+  } else if (id === 'page3') {
+    document.body.classList.add('step-active');
+    if (fill) fill.style.width = '100%';
+  } else {
+    document.body.classList.remove('step-active');
+    if (fill) fill.style.width = '0%';
+  }
 }
+
+function goToStep(n) {
+  const current = document.querySelector('.page.active');
+  const currentN = current ? (parseInt(current.id.replace('page',''), 10) || 1) : 1;
+  const direction = n > currentN ? 'forward' : 'back';
+  // Persistir cualquier valor antes de cambiar de paso.
+  if (currentN === 2 || currentN === 3) saveDraft();
+  showPage('page' + n, direction);
+  if (n === 2 || n === 3) updateStepButtons();
+}
+
+// ── Per-step validation ─────────────────────────────────────────────
+function isStep2Valid() {
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const dob    = document.getElementById('f-fecha-nacimiento').value;
+  const email  = document.getElementById('f-email').value.trim();
+  const genero = document.getElementById('f-genero').value;
+  const busco  = document.getElementById('f-busco').value;
+  const idiomas = getSelectedIdiomas();
+
+  if (nombre.length < 2) return false;
+  if (!dob) return false;
+  if (!isValidEmail(email)) return false;
+  if (genero === '' || genero === null) {
+    // genero='' es el placeholder; null es válido (prefer_not_say tras normalizar, pero aquí leemos el value crudo).
+    if (document.getElementById('f-genero').value === '') return false;
+  }
+  if (!busco) return false;
+  if (idiomas.length === 0) return false;
+
+  // 18+
+  const d = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - d.getFullYear();
+  const m = today.getMonth() - d.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
+  if (age < 18) return false;
+
+  return true;
+}
+
+function isStep3Valid() {
+  const ciudad    = document.getElementById('f-ciudad').value.trim();
+  const profesion = document.getElementById('f-profesion').value.trim();
+  const intencion = document.getElementById('f-intencion').value;
+  return ciudad.length > 0 && profesion.length > 0 && !!intencion;
+}
+
+function updateStepButtons() {
+  const btn2 = document.getElementById('btn-step2-next');
+  const btnSubmit = document.getElementById('btn-submit');
+  if (btn2)      btn2.disabled = !isStep2Valid();
+  if (btnSubmit) btnSubmit.disabled = !(isStep2Valid() && isStep3Valid());
+}
+
+// ── sessionStorage draft ────────────────────────────────────────────
+function saveDraft() {
+  const draft = {
+    nombre:            document.getElementById('f-nombre')?.value || '',
+    fecha_nacimiento:  document.getElementById('f-fecha-nacimiento')?.value || '',
+    email:             document.getElementById('f-email')?.value || '',
+    genero:            document.getElementById('f-genero')?.value || '',
+    busco:             document.getElementById('f-busco')?.value || '',
+    idiomas:           getSelectedIdiomas(),
+    ciudad:            document.getElementById('f-ciudad')?.value || '',
+    profesion:         document.getElementById('f-profesion')?.value || '',
+    intencion:         document.getElementById('f-intencion')?.value || '',
+  };
+  try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch (e) {}
+}
+
+function restoreDraft() {
+  let draft;
+  try { draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY) || 'null'); } catch (e) { return; }
+  if (!draft) return;
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+  set('f-nombre',            draft.nombre);
+  set('f-fecha-nacimiento',  draft.fecha_nacimiento);
+  set('f-email',             draft.email);
+  set('f-genero',            draft.genero);
+  set('f-busco',             draft.busco);
+  set('f-ciudad',            draft.ciudad);
+  set('f-profesion',         draft.profesion);
+  set('f-intencion',         draft.intencion);
+  if (Array.isArray(draft.idiomas)) {
+    draft.idiomas.forEach(val => {
+      const chip = document.querySelector('#chips-idiomas .chip[data-val="' + CSS.escape(val) + '"]');
+      if (chip) chip.classList.add('selected');
+    });
+  }
+}
+
+// ── Wire inputs: cada cambio guarda draft + revalida ────────────────
+(function wireWizard() {
+  const ids = ['f-nombre','f-fecha-nacimiento','f-email','f-genero','f-busco','f-ciudad','f-profesion','f-intencion'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input',  () => { saveDraft(); updateStepButtons(); });
+    el.addEventListener('change', () => { saveDraft(); updateStepButtons(); });
+  });
+  // Chips de idiomas: ya tienen listener de toggle arriba; añadimos el efecto draft+validate.
+  document.querySelectorAll('#chips-idiomas .chip').forEach(chip => {
+    chip.addEventListener('click', () => { saveDraft(); updateStepButtons(); });
+  });
+  // Restaurar y revalidar al cargar.
+  restoreDraft();
+  updateStepButtons();
+})();
 </script>
 </body>
 </html>
