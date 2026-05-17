@@ -652,7 +652,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
   if (!isValidEmail(email)) {
     btn.textContent = 'Reservar mi sitio en Nexo →';
     btn.disabled = false;
-    showError('Introduce un email válido.');
+    showError('Ese correo no tiene buen formato.');
     return;
   }
 
@@ -674,7 +674,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
     if (age < 18) {
       btn.textContent = 'Reservar mi sitio en Nexo →';
       btn.disabled = false;
-      showError('Debes tener al menos 18 años para unirte a Nexo.');
+      showError('Nexo es para mayores de 18.');
       return;
     }
   }
@@ -1004,7 +1004,7 @@ function restoreDraft() {
   submitBtn.addEventListener('click', async function() {
     const email = emailInput.value.trim().toLowerCase();
     if (!email || !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
-      showCheckResult('Email inválido. Verifica el formato.', 'error');
+      showCheckResult('Ese correo no tiene buen formato.', 'error');
       return;
     }
 
