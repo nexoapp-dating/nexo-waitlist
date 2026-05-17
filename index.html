@@ -706,9 +706,17 @@ document.getElementById('main-form').addEventListener('submit', async function(e
       }
     });
 
-    // Network / connection error
+    // Network / connection error — diferenciamos 5xx (servidor) del resto (red, manejado en catch exterior)
     if (invokeError) {
       console.error('submit-waitlist invoke error:', invokeError);
+      const ctx = invokeError && invokeError.context;
+      const status = (ctx && (ctx.status || (ctx.response && ctx.response.status))) || 0;
+      if (status >= 500) {
+        btn.textContent = 'Reservar mi sitio en Nexo →';
+        btn.disabled = false;
+        showError('El servidor no responde ahora mismo. Espera unos segundos e inténtalo de nuevo.');
+        return;
+      }
       throw invokeError;
     }
 
@@ -718,22 +726,27 @@ document.getElementById('main-form').addEventListener('submit', async function(e
       btn.textContent = 'Reservar mi sitio en Nexo →';
       btn.disabled = false;
       if (errCode === 'email_already_registered') {
-        showError('Este email ya está registrado. ¡Ya tienes tu plaza reservada!');
+        showError('Ese correo ya está en la lista. Si quieres ver tu posición, usa la opción de consulta abajo.');
       } else if (errCode === 'rate_limited') {
         const mins = (invokeResult && invokeResult.retry_after_minutes) || 60;
-        showError('Demasiados intentos desde tu conexión. Inténtalo de nuevo en ' + mins + ' minutos.');
+        showError('Demasiados intentos. Inténtalo de nuevo en ' + mins + ' minutos.');
       } else if (errCode === 'underage') {
-        showError('Debes tener al menos 18 años para unirte a Nexo.');
+        showError('Nexo es para mayores de 18.');
       } else if (errCode === 'invalid_field' && invokeResult.detail === 'ref_used_format') {
-        showError('El código de invitación no es válido. Debe tener 6 caracteres (letras y números).');
+        showError('El código de invitación debe tener 6 caracteres (letras y números).');
       } else if (errCode === 'ref_code_not_found') {
-        showError('Este código de invitación no existe. Verifica que lo has escrito bien.');
+        showError('No reconocemos ese código de invitación. Comprueba que está bien escrito.');
+      } else if (errCode === 'self_referral_not_allowed') {
+        showError('Ese es tu propio código de invitación. Compártelo con alguien para subir posiciones cuando se inscriba.');
       } else if (errCode === 'invalid_email' || errCode === 'invalid_field' || errCode === 'invalid_body') {
         console.error('submit-waitlist validation error:', invokeResult);
-        showError('Hay un campo con formato incorrecto. Revisa los datos.');
+        showError('Algún dato no tiene buen formato. Revisa los campos.');
+      } else if (errCode === 'lookup_failed' || errCode === 'insert_failed' || errCode === 'internal_error') {
+        console.error('submit-waitlist server error:', invokeResult);
+        showError('El servidor no responde ahora mismo. Espera unos segundos e inténtalo de nuevo.');
       } else {
         console.error('submit-waitlist error:', invokeResult);
-        showError('Algo fue mal. Inténtalo de nuevo en unos segundos.');
+        showError('Algo no ha funcionado. Si sigue, escríbenos a hola@nexodating.app.');
       }
       return;
     }
@@ -774,7 +787,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
     console.error(err);
     btn.textContent = 'Reservar mi sitio en Nexo →';
     btn.disabled = false;
-    showError('Algo fue mal. Inténtalo de nuevo en unos segundos.');
+    showError('Sin conexión o el servidor no responde. Comprueba tu wifi e inténtalo de nuevo.');
   }
 });
 
