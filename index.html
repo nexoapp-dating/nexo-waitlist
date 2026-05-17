@@ -691,7 +691,7 @@ document.getElementById('main-form').addEventListener('submit', async function(e
 
     // Llamar a la edge function submit-waitlist:
     // - server-side: rate limit por IP, validación, ref_code, puntos, premio al referidor
-    const { data: invokeResult, error: invokeError } = await db.functions.invoke('submit-waitlist', {
+    let { data: invokeResult, error: invokeError } = await db.functions.invoke('submit-waitlist', {
       body: {
         nombre,
         email,
@@ -717,7 +717,19 @@ document.getElementById('main-form').addEventListener('submit', async function(e
         showError('El servidor no responde ahora mismo. Espera unos segundos e inténtalo de nuevo.');
         return;
       }
-      throw invokeError;
+      // 4xx con body JSON: supabase-js no parsea el body en `data` cuando status != 2xx.
+      // El body está en ctx.response (FunctionsHttpError) o ctx puede SER la Response.
+      // Intentamos parsearlo para que el bloque B muestre el copy específico.
+      const res = ctx && (ctx.response || (typeof ctx.json === 'function' ? ctx : null));
+      if (res && typeof res.json === 'function') {
+        try {
+          invokeResult = await res.json();
+        } catch (_) { /* body no parseable o ya consumido */ }
+      }
+      if (!invokeResult || !invokeResult.error) {
+        throw invokeError;
+      }
+      // cae al bloque B con invokeResult.error poblado
     }
 
     // Function returned an error response
