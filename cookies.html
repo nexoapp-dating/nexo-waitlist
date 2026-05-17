@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Cookies — Nexo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D1117;
+      --surface: #13191f;
+      --border: #1e2730;
+      --gold: #C9A84C;
+      --gold-dim: rgba(201,168,76,0.15);
+      --text: #F5F0E8;
+      --muted: #8A8A7A;
+      --body-max: 720px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+    }
+
+    .logo-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── CONTENT ── */
+    main {
+      max-width: var(--body-max);
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .last-updated {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      margin-bottom: 40px;
+    }
+
+    section h2 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+      padding-left: 14px;
+      border-left: 2px solid var(--gold);
+    }
+
+    section p {
+      font-size: 0.95rem;
+      color: #c8c4bc;
+      line-height: 1.8;
+    }
+
+    section p + p {
+      margin-top: 12px;
+    }
+
+    section ul {
+      margin-top: 12px;
+      padding-left: 20px;
+      font-size: 0.95rem;
+      color: #c8c4bc;
+      line-height: 1.8;
+    }
+
+    section ul li {
+      margin-bottom: 6px;
+    }
+
+    a {
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid var(--gold-dim);
+      transition: border-color 0.2s;
+    }
+
+    a:hover {
+      border-color: var(--gold);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    footer nav {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    footer nav a {
+      color: var(--muted);
+      border-bottom: none;
+      font-size: 0.8rem;
+      transition: color 0.2s;
+    }
+
+    footer nav a:hover {
+      color: var(--gold);
+    }
+
+    @media (max-width: 480px) {
+      .page-title { font-size: 1.5rem; }
+      main { padding: 32px 16px 64px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Nexo</div>
+  <div class="logo-sub">Política de Cookies</div>
+</header>
+
+<main>
+  <h1 class="page-title">Política de Cookies</h1>
+  <p class="last-updated">Última actualización: mayo de 2026</p>
+
+  <section>
+    <h2>1. ¿Qué son las cookies?</h2>
+    <p>Las cookies son pequeños archivos de texto que un sitio web guarda en tu dispositivo cuando lo visitas. Permiten que el sitio recuerde información sobre tu visita, como el idioma preferido o estadísticas básicas de uso.</p>
+    <p>Existen cookies estrictamente necesarias para el funcionamiento del sitio y cookies analíticas que ayudan a entender cómo se utiliza, siempre de forma agregada.</p>
+  </section>
+
+  <section>
+    <h2>2. Cookies que usamos</h2>
+    <p>En Nexo utilizamos <strong>Vercel Analytics</strong>, una herramienta de analítica web propia (first-party) que recopila estadísticas técnicas de forma anónima y agregada.</p>
+    <p>Estas cookies son técnicas, no permiten identificarte de forma individual y cumplen con el Reglamento General de Protección de Datos (RGPD) y la legislación española vigente. No se utilizan para perfilado publicitario ni para seguimiento entre sitios.</p>
+  </section>
+
+  <section>
+    <h2>3. Cookies de terceros</h2>
+    <p>Actualmente Nexo <strong>no utiliza cookies de terceros</strong>. No incrustamos píxeles de seguimiento, ni cookies publicitarias, ni herramientas de análisis externas que compartan datos con otras plataformas.</p>
+  </section>
+
+  <section>
+    <h2>4. Cómo gestionar cookies</h2>
+    <p>Puedes deshabilitar o eliminar las cookies en cualquier momento desde la configuración de tu navegador. Consulta las instrucciones oficiales según el navegador que utilices:</p>
+    <ul>
+      <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Google Chrome</a></li>
+      <li><a href="https://support.mozilla.org/es/kb/habilitar-y-deshabilitar-cookies-sitios-web-rastrear-preferencias" target="_blank" rel="noopener">Mozilla Firefox</a></li>
+      <li><a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Safari</a></li>
+      <li><a href="https://support.microsoft.com/es-es/microsoft-edge/eliminar-las-cookies-en-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener">Microsoft Edge</a></li>
+    </ul>
+    <p>Ten en cuenta que deshabilitar las cookies puede afectar a la experiencia de navegación en algunos sitios web.</p>
+  </section>
+
+  <section>
+    <h2>5. Contacto</h2>
+    <p>Para cualquier consulta sobre el uso de cookies en Nexo, puedes contactarnos en:</p>
+    <p><a href="mailto:privacidad@nexodating.app">privacidad@nexodating.app</a></p>
+    <p>Nexo — Barcelona, España</p>
+  </section>
+</main>
+
+<footer>
+  <p>© 2026 Nexo. Todos los derechos reservados.</p>
+  <nav>
+    <a href="privacy.html">Privacidad</a>
+    <a href="terms.html">Términos de uso</a>
+    <a href="cookies.html">Cookies</a>
+  </nav>
+</footer>
+
+</body>
+</html>
